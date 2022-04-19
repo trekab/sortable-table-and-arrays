@@ -141,7 +141,8 @@
         break;
       case "merge":
         console.profile("mergeSort");
-        mergeSort();
+        const mergeArr = mergeSort(itemsNotNull);
+        renderNodes(mergeArr);
         console.profileEnd("mergeSort");
         break;
       case "insertion":
@@ -183,7 +184,7 @@
           const rowB = Array.from(arr[j].childNodes);
           const x = parseFloat(rowA[sorterIndex].textContent);
           const y = parseFloat(rowB[sorterIndex].textContent);
-          if(x > y){
+          if (x > y) {
             let temp = arr[i];
             arr[i] = arr[j];
             arr[j] = temp;
@@ -192,12 +193,45 @@
         }
       }
     } while (swapped);
-    
+
     return arr;
   }
-  function mergeSort(arr) {}
+  function mergeSort(arr) {
+    if (arr.length <= 1) {
+      return arr;
+    }
 
-  function merge(left, right) {}
+    const middle = Math.floor(arr.length / 2),
+      left = arr.slice(0, middle),
+      right = arr.slice(middle);
+
+    return merge(mergeSort(left), mergeSort(right));
+  }
+
+  function merge(left, right) {
+    let results = [],
+    indexLeft = 0,
+    indexRight = 0;
+    const sorterIndex = headers.indexOf(sorters[0]);
+
+    while(indexLeft < left.length && indexRight < right.length){
+      const rowA = Array.from(left[indexLeft].childNodes);
+      const rowB = Array.from(right[indexRight].childNodes);
+
+      const x = parseFloat(rowA[sorterIndex].textContent);
+      const y = parseFloat(rowB[sorterIndex].textContent);
+
+      if(x < y){
+        results.push(left[indexLeft]);
+        indexLeft ++;
+      } else {
+        results.push(right[indexRight]);
+        indexRight++
+      }
+    }
+
+    return results.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
+  }
   function insertionSort(arr) {}
   function quartileSort(sorter) {}
   function splitQuartiles(results, sorter) {}
