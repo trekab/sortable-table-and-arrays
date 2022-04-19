@@ -244,9 +244,9 @@
       for (j = i - 1; j >= 0; j--) {
         const rowB = Array.from(arr[j].childNodes);
         const y = parseFloat(rowB[sorterIndex].textContent);
-        if(y <= x){
+        if (y <= x) {
           break;
-        }else{
+        } else {
           arr[j + 1] = arr[j];
         }
       }
@@ -254,8 +254,80 @@
     }
     return arr;
   }
-  function quartileSort(sorter) {}
-  function splitQuartiles(results, sorter) {}
+  function quartileSort(sorter) {
+    const nodes = Array.from(tableEle.childNodes);
+    nodes.shift();
+    const firstBuckets = splitQuartiles(nodes, sorter);
+    nodes.length = 0;
+    firstBuckets.forEach((bucket) => {
+      const secondBuckets = splitQuartiles(bucket, sorter);
+      bucket.length = 0;
+      secondBuckets.forEach((secbucket) => {
+        const sorterIndex = headers.indexOf(sorter);
+        if (sorters[0] === sorter) {
+          if (sorters.length > 1) {
+            secbucket.sort((a, b) => {
+              const rowA = Array.from(a.childNodes);
+              const rowB = Array.from(b.childNodes);
+              const x = parseFloat(rowA[sorterIndex].innerText);
+              const y = parseFloat(rowB[sorterIndex].innerText);
+              if (!isNaN(x) || !isNaN(y)) {
+                return x < y ? 1 : x > y ? -1 : 0;
+              } else {
+                return -1;
+              }
+            });
+          } else {
+            regularSort(secbucket, sorterIndex);
+          }
+        }
+        secbucket.forEach((currentVal) => {
+          bucket.push(currentVal);
+        });
+      });
+      if (sorters.length > 1) {
+        bucket.reverse();
+      }
+      bucket.forEach((element) => {
+        nodes.push(element);
+      });
+    });
+    renderNodes(nodes);
+  }
+  function splitQuartiles(nodes, sorter) {
+    let allBuckets = [[], [], [], [], []];
+    const sorterIndex = headers.indexOf(sorter);
+    nodes.forEach((currentVal) => {
+      const rowA = Array.from(currentVal.childNodes);
+      const x = parseFloat(rowA[sorterIndex].innerText);
+      if (!isNaN(x)) {
+        if (
+          x >= columnSummary[sorter].min &&
+          x <= columnSummary[sorter].first
+        ) {
+          allBuckets[1].push(currentVal);
+        }
+        if (
+          x > columnSummary[sorter].first &&
+          x <= columnSummary[sorter].mean
+        ) {
+          allBuckets[2].push(currentVal);
+        }
+        if (
+          x > columnSummary[sorter].mean &&
+          x <= columnSummary[sorter].third
+        ) {
+          allBuckets[3].push(currentVal);
+        }
+        if (x > columnSummary[sorter].third && x <= columnSummary[sorter].max) {
+          allBuckets[4].push(currentVal);
+        }
+      } else {
+        allBuckets[0].push(currentVal);
+      }
+    });
+    return allBuckets;
+  }
   function renderNodes(arr) {
     const reverse = document.getElementById("reverse").checked;
     if (reverse) {
@@ -306,8 +378,21 @@
       firstQuartile = null,
       thirdQuartile = null;
     const headers = Object.keys(items[0]);
-    headers.forEach((header) => {
+    headers.forEach((header, i) => {
       let tempArr = [];
+      items.forEach((item, i) => {
+        if (item[header] !== null) {
+          tempArr.push(item[header]);
+          if (i === items.length - 1) {
+            tempArr.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+            minVal = Math.min(...tempArr);
+            maxVal = Math.max(...tempArr);
+            meanVal = tempArr[Math.floor(tempArr.length / 2)];
+            firstQuartile = tempArr[Math.floor(tempArr.length / 4)];
+            thirdQuartile = tempArr[Math.floor((tempArr.length / 4) * 3)];
+          }
+        }
+      });
       summary[header] = {
         values: tempArr,
         min: minVal,
@@ -317,6 +402,8 @@
         third: thirdQuartile,
       };
     });
+
+    console.log(summary);
     return summary;
   }
   function heatMapColor(ele, val, key) {
