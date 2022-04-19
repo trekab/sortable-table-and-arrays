@@ -125,6 +125,7 @@
     });
     sorters.reverse();
     const sorterIndex = headers.indexOf(sorters[0]);
+	const itemsNotNull = filterNull(sorterIndex);
     switch (getSort()) {
       case "regular":
         console.profile("regularSort");
@@ -160,8 +161,6 @@
     }
   }
   function regularSort(arr, index) {
-    const items = Array.from(tableEle.childNodes);
-	console.log(items)
 	arr.sort((a, b) => {
       const x = a["Area"] === null ? -1 : a["Area"];
       const y = b["Area"] === null ? -1 : b["Area"];
@@ -211,7 +210,13 @@
     });
     return sorter;
   }
-  function filterNull(sorterIndex) {}
+  function filterNull(sorterIndex) {
+	const items = Array.from(tableEle.childNodes);
+	return items.filter((row) => {
+		const rowTD = Array.from(row.childNodes);
+		return rowTD[sorterIndex].textContent;
+	})
+  }
   function minMaxMean(items) {
     let summary = {},
       minVal = null,
