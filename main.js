@@ -130,12 +130,13 @@
       case "regular":
         console.profile("regularSort");
         const regularArr = regularSort(itemsNotNull, sorterIndex);
-		renderNodes(regularArr);
+        renderNodes(regularArr);
         console.profileEnd("regularSort");
         break;
       case "bubble":
         console.profile("bubbleSort");
-        bubbleSort();
+        const bubbleArr = bubbleSort(itemsNotNull, sorterIndex);
+        renderNodes(bubbleArr);
         console.profileEnd("bubbleSort");
         break;
       case "merge":
@@ -171,7 +172,29 @@
     });
     return arr;
   }
-  function bubbleSort(arr, sorterIndex) {}
+  function bubbleSort(arr, sorterIndex) {
+    let swapped;
+    do {
+      swapped = false;
+      for (let i = 0; i < arr.length; i++) {
+        const j = i + 1;
+        if (arr[i] && arr[j]) {
+          const rowA = Array.from(arr[i].childNodes);
+          const rowB = Array.from(arr[j].childNodes);
+          const x = parseFloat(rowA[sorterIndex].textContent);
+          const y = parseFloat(rowB[sorterIndex].textContent);
+          if(x > y){
+            let temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            swapped = true;
+          }
+        }
+      }
+    } while (swapped);
+    
+    return arr;
+  }
   function mergeSort(arr) {}
 
   function merge(left, right) {}
