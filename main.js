@@ -147,7 +147,8 @@
         break;
       case "insertion":
         console.profile("insertionSort");
-        insertionSort();
+        const insertionArr = insertionSort(itemsNotNull, sorterIndex);
+        renderNodes(insertionArr);
         console.profileEnd("insertionSort");
         break;
       case "quartile":
@@ -210,29 +211,49 @@
 
   function merge(left, right) {
     let results = [],
-    indexLeft = 0,
-    indexRight = 0;
+      indexLeft = 0,
+      indexRight = 0;
     const sorterIndex = headers.indexOf(sorters[0]);
 
-    while(indexLeft < left.length && indexRight < right.length){
+    while (indexLeft < left.length && indexRight < right.length) {
       const rowA = Array.from(left[indexLeft].childNodes);
       const rowB = Array.from(right[indexRight].childNodes);
 
       const x = parseFloat(rowA[sorterIndex].textContent);
       const y = parseFloat(rowB[sorterIndex].textContent);
 
-      if(x < y){
+      if (x < y) {
         results.push(left[indexLeft]);
-        indexLeft ++;
+        indexLeft++;
       } else {
         results.push(right[indexRight]);
-        indexRight++
+        indexRight++;
       }
     }
 
-    return results.concat(left.slice(indexLeft)).concat(right.slice(indexRight))
+    return results
+      .concat(left.slice(indexLeft))
+      .concat(right.slice(indexRight));
   }
-  function insertionSort(arr) {}
+  function insertionSort(arr, sorterIndex) {
+    for (let i = 1; i < arr.length; i++) {
+      const rowA = Array.from(arr[i].childNodes);
+      const x = parseFloat(rowA[sorterIndex].textContent);
+      const currentValue = arr[i];
+      let j;
+      for (j = i - 1; j >= 0; j--) {
+        const rowB = Array.from(arr[j].childNodes);
+        const y = parseFloat(rowB[sorterIndex].textContent);
+        if(y <= x){
+          break;
+        }else{
+          arr[j + 1] = arr[j];
+        }
+      }
+      arr[j + 1] = currentValue;
+    }
+    return arr;
+  }
   function quartileSort(sorter) {}
   function splitQuartiles(results, sorter) {}
   function renderNodes(arr) {
