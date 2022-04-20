@@ -1,6 +1,6 @@
 # Algorithm Sorter
 
-> In this project, I implemented some interesting sorting algorithms and practiced optimizing code performing for these sorting algorithms.
+> In this project, I implemented some interesting sorting algorithms and practiced optimizing code for these sorting algorithms.
 
 ![screenshot](./algorithm-sorter.png)
 
