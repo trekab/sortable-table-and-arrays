@@ -64,7 +64,7 @@ i.fas.mainIcon {
   display: block;
 }
 .selected {
-  /*color: white;*/
+  color: white;
 }
 .area i:before{
   content:"\f0ac";

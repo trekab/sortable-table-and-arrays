@@ -86,6 +86,17 @@
           val = entry[1],
           tdEle = document.createElement("TD");
         tdEle.innerText = val;
+        const iEle = document.createElement("i");
+        iEle.className = "fas mainIcon";
+        if (key === "Population growth rate") {
+          if (val > 0) {
+            iEle.className = "fas fa-arrow-up";
+          }
+          if (val < 0) {
+            iEle.className = "fas fa-arrow-down";
+          }
+        }
+        tdEle.appendChild(iEle);
         if (i === 0) {
           tdEle.className = "fixed";
         } else {
